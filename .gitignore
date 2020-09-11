@@ -1,0 +1,14 @@
+*.log
+*.aux
+*.backup
+*~
+*.swp
+*.asc
+
+out
+.ammonite/
+.metals 
+.bloop/
+.idea/
+.vscode/
+
