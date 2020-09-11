@@ -4,10 +4,11 @@
 *~
 *.swp
 *.asc
+*.iml
 
 out
 .ammonite/
-.metals 
+.metals
 .bloop/
 .idea/
 .vscode/

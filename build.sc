@@ -1,13 +1,15 @@
-import $ivy.`com.lihaoyi::mill-contrib-bloop:$MILL_VERSION`
-
 import mill._
 import scalalib._
 
 trait ZioModule extends ScalaModule {
-  def scalaVersion = "2.13.3"
+
+  val zioVersion : String = "1.0.1"
+  override def scalaVersion = "2.13.3"
 
   override def ivyDeps : T[Agg[Dep]] = T { super.ivyDeps() ++ Agg(
-    ivy"dev.zio::zio:1.0.1".withDottyCompat(scalaVersion())
+    ivy"dev.zio::zio:$zioVersion".withDottyCompat(scalaVersion()),
+    ivy"dev.zio::zio-streams:$zioVersion".withDottyCompat(scalaVersion()),
+    ivy"org.apache.geronimo.specs:geronimo-jms_1.1_spec:1.1"
   )}
 
   override def scalacOptions = Seq(
