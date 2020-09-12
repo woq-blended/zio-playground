@@ -5,23 +5,23 @@ import zio._
 import zio.blocking._
 import zio.stream.ZStream
 
-class JmsConsumer[R, A](consumer : MessageConsumer) {
+class JmsConsumer[A](consumer : MessageConsumer) {
 
-  def consume(enrich : (Message, JmsConsumer[R, A]) => A) : ZStream[R with BlockingConnection, JMSException, A] =
+  def consume(enrich : (Message, JmsConsumer[A]) => A) : ZStream[Blocking, JMSException, A] =
     ZStream.repeatEffect(effectBlockingInterrupt(enrich(consumer.receive(), this)).refineOrDie { case e : JMSException => e })
 }
 
 object JmsConsumer {
 
-  def make[R, A] (
-    dest : DestinationFactory[R with BlockingConnection],
+  def make[A] (
+    dest : DestinationFactory,
     transacted : Boolean = false,
     ackMode : Int = Session.AUTO_ACKNOWLEDGE
-  ) : ZManaged[R with BlockingConnection, JMSException, JmsConsumer[R, A]] =
+  ) : ZManaged[BlockingConnection, JMSException, JmsConsumer[A]] =
     for {
       con     <- ZIO.service[Connection].toManaged_
       session <- session(con, transacted, ackMode)
       d       <- dest(session).toManaged_
       mc      <- consumer(session, d)
-    } yield (new JmsConsumer[R, A](mc))
+    } yield (new JmsConsumer[A](mc))
 }
