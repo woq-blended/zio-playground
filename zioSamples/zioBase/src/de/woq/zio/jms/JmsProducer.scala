@@ -2,6 +2,7 @@ package de.woq.zio.jms
 
 import zio._
 import javax.jms._
+import zio.blocking.Blocking
 import zio.stream.ZSink
 
 class JmsProducer[R, E >: JMSException, A](sender: A => ZIO[R, E, Message]) {
@@ -11,7 +12,7 @@ class JmsProducer[R, E >: JMSException, A](sender: A => ZIO[R, E, Message]) {
 object JmsProducer {
 
   def sink[R, E >: JMSException, A](
-    destination: DestinationFactory[R with BlockingConnection],
+    destination: DestinationFactory[R with Blocking],
     encoder: (A, Session) => ZIO[R, E, Message],
     transacted: Boolean = false,
     acknowledgementMode: Int = Session.AUTO_ACKNOWLEDGE
